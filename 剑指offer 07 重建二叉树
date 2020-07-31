@@ -1,0 +1,70 @@
+输入某二叉树的前序遍历和中序遍历的结果，请重建该二叉树。假设输入的前序遍历和中序遍历的结果中都不含重复的数字。
+
+ 
+
+例如，给出
+
+前序遍历 preorder = [3,9,20,15,7]
+中序遍历 inorder = [9,3,15,20,7]
+返回如下的二叉树：
+
+    3
+   / \
+  9  20
+    /  \
+   15   7
+ 
+
+限制：
+
+0 <= 节点个数 <= 5000
+
+ 
+
+
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/zhong-jian-er-cha-shu-lcof
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+
+
+解题思路：
+
+  preorder的遍历顺序为  Root -> Left -> Right
+  inorder的遍历顺序为 Left -> Root -> Right
+  由此我们可以通过 preoder中的 index 0 确定最顶端的root值由此找到Root在inorder中index，从而把inorder的List中的元素分为左右两边。
+  我们接下来在从Preorder的List中找到root左右两边的的节点，在preorder中的分布为Left = root + 1； Right = root + 2(此处不能直接带入)当遇见[1,2], [1,2]不存在右边子节点的情况会超出界限。
+  以接下来中的Root.left 和 Root.right 节点作为root 传入进行递归，left 和 right 左右边界参数限制之后递归的数组范围。
+  
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    int[] preorder;
+    HashMap <Integer, Integer> dic = new HashMap<>();
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        this.preorder = preorder;
+        for (int i = 0; i < inorder.length; i++){
+            dic.put(inorder[i],i);
+        }
+        TreeNode res = new TreeNode();
+        res = helper(0,0,inorder.length-1);
+        return res;
+    }
+
+    private TreeNode helper(int root_node, int left, int right){
+        if (left > right)
+            return null;
+        TreeNode root = new TreeNode(preorder[root_node]);
+        int index = dic.get(preorder[root_node]);
+        root.left = helper(root_node + 1, left, index - 1);
+        root.right = helper(root_node + index + 1 - left, index + 1, right);
+        return root;
+    }
+}
