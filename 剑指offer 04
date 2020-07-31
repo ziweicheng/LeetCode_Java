@@ -1,0 +1,58 @@
+在一个 n * m 的二维数组中，每一行都按照从左到右递增的顺序排序，每一列都按照从上到下递增的顺序排序。请完成一个函数，输入这样的一个二维数组和一个整数，判断数组中是否含有该整数。
+
+ 
+
+示例:
+
+现有矩阵 matrix 如下：
+
+[
+  [1,   4,  7, 11, 15],
+  [2,   5,  8, 12, 19],
+  [3,   6,  9, 16, 22],
+  [10, 13, 14, 17, 24],
+  [18, 21, 23, 26, 30]
+]
+给定 target = 5，返回 true。
+
+给定 target = 20，返回 false。
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/er-wei-shu-zu-zhong-de-cha-zhao-lcof
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+
+
+解题思路：
+  
+1.暴力解法：
+  首先会想到直接遍历整个数组去寻找target目标是否存在，该解法需要时间复杂度为O(mn)。
+2. 
+  解题过程中联想到该数组为有序数组，所以考虑到可以使用二分法减少时间复杂度，首先该数组并非一个单项的有序数组，而是在 row 和 column上都存在递增，所以只能对row 上的数据进行二分搜索。
+  因为在col 也是递增分布，所以当matrix[i][0] 大于搜索target时可以确定之后的行中不存在小于target的目标所以可以直接返回false。 代码时间复杂度为O(NlogM),空间复杂度为O(1).具体代码如下：
+class Solution {
+    public boolean findNumberIn2DArray(int[][] matrix, int target) {
+        if (matrix.length == 0 || matrix[0].length == 0){
+            return false;
+        }
+        for (int i = 0; i < matrix.length; i++){
+        	int left = 0;
+            int right = matrix[0].length - 1;
+            if(matrix[i][0] > target){
+                return false;
+            }
+            while (left <= right){
+                int temp = (left + right) / 2;
+                if (matrix[i][temp] == target || matrix[i][right] == target || matrix[i][left] == target){
+                    return true;
+                }
+                else if (matrix[i][temp] < target){
+                	left = temp + 1;
+                }
+                else{
+                    right = temp - 1;
+                }
+            }
+        }
+        return false;
+    }
+}
