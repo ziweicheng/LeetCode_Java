@@ -1,0 +1,45 @@
+把一个数组最开始的若干个元素搬到数组的末尾，我们称之为数组的旋转。输入一个递增排序的数组的一个旋转，输出旋转数组的最小元素。例如，数组 [3,4,5,1,2] 为 [1,2,3,4,5] 的一个旋转，该数组的最小值为1。  
+
+示例 1：
+
+输入：[3,4,5,1,2]
+输出：1
+示例 2：
+
+输入：[2,2,2,0,1]
+输出：0
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/xuan-zhuan-shu-zu-de-zui-xiao-shu-zi-lcof
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+
+解题思路：
+1.暴力解法：遍历数组寻找最小值
+2.二分法变形：数组某种程度上为有序数组，所以可以想到用二分法来求解此题。旋转数组后，左边数组一定大于右边数组(特殊情况左边数组为null)，此时我们可以用二分法搜索，
+以中间值和最右边值进行比较：
+当numbers[mid] > numbers[right] 时说明mid值位于左边数组内，此时left = mid + 1；
+当numbers[mid] < numbers[right] 时说明mid处于右边数组内，此时 right = mid；若为mid - 1 有可能使right 脱离右边数组。为什么不能时小于等于，小于等于时原始数组末尾值全部相等时
+旋转无法判别。
+当除了以上特定情况时right--，出现相等情况。 右边索引递减可以确保出现相等情况时从右往左检索，因为出现相等情况时最小值一定在当前最右边的值左边。
+
+代码如下：
+
+class Solution {
+    public int minArray(int[] numbers) {
+        int left = 0;
+        int right = numbers.length - 1;
+        while (left < right){
+            int mid = (left + right) / 2;
+            if (numbers[mid] > numbers[right]){
+                left = mid + 1;
+            }
+            else if (numbers[mid] < numbers[right]){
+                right = mid;
+            }
+            else{
+                right --;
+            }
+        }
+        return numbers[left];
+    }
+}
