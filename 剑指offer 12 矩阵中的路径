@@ -1,0 +1,56 @@
+
+请设计一个函数，用来判断在一个矩阵中是否存在一条包含某字符串所有字符的路径。路径可以从矩阵中的任意一格开始，每一步可以在矩阵中向左、右、上、下移动一格。如果一条路径经过了矩阵的某一格，那么该路径不能再次进入该格子。例如，在下面的3×4的矩阵中包含一条字符串“bfce”的路径（路径中的字母用加粗标出）。
+
+[["a","b","c","e"],
+["s","f","c","s"],
+["a","d","e","e"]]
+
+但矩阵中不包含字符串“abfb”的路径，因为字符串的第一个字符b占据了矩阵中的第一行第二个格子之后，路径不能再次进入这个格子。
+
+ 
+
+示例 1：
+
+输入：board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], word = "ABCCED"
+输出：true
+示例 2：
+
+输入：board = [["a","b"],["c","d"]], word = "abcd"
+输出：false
+提示：
+
+1 <= board.length <= 200
+1 <= board[i].length <= 200
+
+
+解题思路：
+
+首先想到DFS搜索，然后代码实现过程中遇到的问题，首先helper中的判定false条件开始没有加上target[k] != board[i][j]导致后面又用if语句进入判定之后不方便根据不同情况进行输出语句的书写，
+除非将res 定义语句放到if语句之外。其次主程序中return开始时直接return了helper的结果，会产生错误，因为没有遍历到每个节点如果第一个节点无法访问就直接结束了。
+
+优化构想：进行双向dfs的搜索，将target 进行正向和反向的搜索若存在反向路径则也return true。
+
+class Solution {
+    public boolean exist(char[][] board, String word) {
+        char[] target = word.toCharArray();
+        for (int i = 0; i < board.length; i++){
+            for (int j = 0; j < board[0].length; j++){
+                if (helper(target, board, i, j, 0))
+                    return true;
+            }
+        }
+        return false;
+    }
+    boolean helper(char[] target, char[][] board, int i, int j, int k){
+        if(i >= board.length || i < 0 || j >= board[0].length || j < 0 || target[k] != board[i][j]){
+            return false;
+        }
+        if (k == target.length - 1)
+            return true;
+        char temp = board[i][j];
+        board[i][j] = '/';
+        boolean res = helper(target, board, i + 1, j, k + 1) || helper(target, board, i - 1, j, k + 1) || helper(target, board, i, j + 1, k + 1) || helper(target, board, i, j - 1, k + 1);
+        board[i][j] = temp;
+        return res;
+    }
+}
