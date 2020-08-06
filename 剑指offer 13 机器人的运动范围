@@ -1,0 +1,51 @@
+地上有一个m行n列的方格，从坐标 [0,0] 到坐标 [m-1,n-1] 。一个机器人从坐标 [0, 0] 的格子开始移动，它每次可以向左、右、上、下移动一格（不能移动到方格外），
+也不能进入行坐标和列坐标的数位之和大于k的格子。例如，当k为18时，机器人能够进入方格 [35, 37] ，因为3+5+3+7=18。但它不能进入方格 [35, 38]，因为3+5+3+8=19。
+请问该机器人能够到达多少个格子？
+
+ 
+
+示例 1：
+
+输入：m = 2, n = 3, k = 1
+输出：3
+示例 2：
+
+输入：m = 3, n = 1, k = 0
+输出：1
+提示：
+
+1 <= n,m <= 100
+0 <= k <= 20
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/ji-qi-ren-de-yun-dong-fan-wei-lcof
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+
+解题思路：
+  首先想到可以用DFS或者BFS搜索，接下来寻找题目中限定条件的规律：当m和n不产生进位时在k的限定条件下会在矩阵中形成一个倒三角形的可到达区域和不可到达区域。
+当产生进位时有可能出现断层因为各个位数上相加的结果和之前相比减少了8.使得之前已经成为不可到达区域后有形成了一片可以允许进入的区域（但是这片区域如果不和之前区域相连也是无法到达的区域）。
+所以我们通过dfs或者bfs搜索确定能否在限定条件下达到指定位置。
+
+DFS：
+class Solution {
+    int m, n, k;
+    public int movingCount(int m, int n, int k) {
+        this.m = m;
+        this.n = n;
+        this.k = k;
+        boolean[][] visited = new boolean[m][n];
+        return dfs(0, 0, 0, 0, visited);
+    }
+
+    private int dfs(int i, int j, int si, int sj, boolean[][] visited){
+        if(i >= m || j >= n || (si + sj) > k || visited[i][j])
+            return 0;
+        visited[i][j] = true;
+        return 1 + dfs(i + 1, j , (i + 1) % 10 == 0? si - 8 : si + 1, sj,visited) + dfs(i, j + 1 , si, (j + 1) % 10 == 0 ? sj - 8 : sj + 1, visited);
+    }
+}
+
+
+
+BFS:
+
