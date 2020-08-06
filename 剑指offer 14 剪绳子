@@ -57,3 +57,32 @@
         return dp[index-1];
     }
 }
+
+
+正常推算代码为：
+class Solution {
+    public int cuttingRope(int n) {
+        if (n == 2) return 1;
+        int[] dp = new int[n+1];
+        dp[1] = 1;
+        dp[2] = 1;
+        int i = 1;
+        int index = 3;
+        while(index <= n){
+            int temp_1 = (dp[i+1] >= i+1 ? dp[i + 1] : i + 1) * (dp[index -1 -i] >= (index - 1 - i) ? dp[index- 1 - i] : index- 1 -i);
+            int temp_2 = (dp[i] >= i ? dp[i] : i) * (dp[index-i] >= (index-i) ? dp[index-i] : index-i);
+            if (temp_1 >= temp_2){
+                dp[index] = temp_1;
+                index ++;
+                i ++;
+            }
+            else{
+                dp[index] = temp_2;
+                index ++;
+            }
+        }
+            
+        return dp[index-1];
+    }
+
+}
