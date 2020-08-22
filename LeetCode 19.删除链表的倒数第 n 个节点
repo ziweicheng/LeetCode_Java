@@ -1,0 +1,56 @@
+给定一个链表，删除链表的倒数第 n 个节点，并且返回链表的头结点。
+
+示例：
+
+给定一个链表: 1->2->3->4->5, 和 n = 2.
+
+当删除了倒数第二个节点后，链表变为 1->2->3->5.
+说明：
+
+给定的 n 保证是有效的。
+
+进阶：
+
+你能尝试使用一趟扫描实现吗？
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+
+
+解题思路：
+  第一想法想要遍历两此链表第一次找到倒数第n位的所在位置(L - N)，第二次遍历删除。
+题目要求一次遍历。此时想到可以使用快慢指针，保持相距间隔为N+1.当快指针走到null时删除慢指针后一位元素即可(注意当删除表头时会空指针报错，所以当两指针距离无法达到N+1时便直接删除表头即可)。
+
+代码：
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+
+        ListNode pointer1 = head;
+        ListNode pointer2 = head;
+        int dis = 0;
+        while(pointer1 != null){
+            if (dis == n+1){
+                pointer1 = pointer1.next;
+                pointer2 = pointer2.next;
+            }
+            else{
+                pointer1 = pointer1.next;
+                dis += 1;
+            }
+        }
+        if (dis == n + 1)
+            pointer2.next = pointer2.next.next;
+        else
+            head = head.next;
+        return head;
+    }
+}
